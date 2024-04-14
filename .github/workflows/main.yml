@@ -18,8 +18,12 @@ jobs:
       with:
         php-version: '7.4'  # Change this to your PHP version
 
-    - name: Install Composer dependencies
+
+    - name:  Composer Update
       run: composer install --no-dev --optimize-autoloader
+
+    - name: Install Composer dependencies
+      run: composer update
 
     - name: Build assets (if applicable)
       run: |

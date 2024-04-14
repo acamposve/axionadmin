@@ -20,10 +20,10 @@ jobs:
 
 
     - name:  Composer Update
-      run: composer install --no-dev --optimize-autoloader
+      run: composer update --lock
 
     - name: Install Composer dependencies
-      run: composer update
+      run: composer install --no-dev --optimize-autoloader
 
     - name: Build assets (if applicable)
       run: |

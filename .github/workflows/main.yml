@@ -28,7 +28,6 @@ jobs:
     - name: Build assets (if applicable)
       run: |
         npm install
-        npm run buid  # or any other build script
 
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@3.1.1

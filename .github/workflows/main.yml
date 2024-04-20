@@ -32,7 +32,7 @@ jobs:
 
     - name: Migrations
       run: |
-        RUN php rankbot/artisan migrate --force
+        php rankbot/artisan migrate --force
 
 
     - name: FTP Deploy

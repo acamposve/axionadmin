@@ -32,8 +32,7 @@ jobs:
 
     - name: Migrations
       run: |
-        php artisan migrate
-
+        RUN php rankbot/artisan migrate --force
 
 
     - name: FTP Deploy

@@ -1,60 +1,101 @@
 import { Component, OnInit } from '@angular/core';
-import { CategoriasServiceService } from './categorias-service.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { CategoriasService } from './services/categorias.service';
+import { HeaderComponent } from "../shared/header/header.component";
+
 @Component({
   selector: 'app-categorias',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, HeaderComponent],
   templateUrl: './categorias.component.html',
   styleUrl: './categorias.component.css'
 })
+
 export class CategoriasComponent implements OnInit {
   categorias: any[] = [];
-  nuevaCategoria = { nombre: '', descripcion: '', foto: null as File | null };
+  nuevaCategoria: any = { nombre: '', descripcion: '', foto: null };
+  isEditMode: boolean = false;
+  categoriaEditando: any = null;
 
-  constructor(private categoriaservice: CategoriasServiceService) {}
+  constructor(private categoriasService: CategoriasService) {}
 
   ngOnInit(): void {
     this.loadCategorias();
   }
 
+  loadCategorias() {
+    this.categoriasService.getCategorias().then((categorias) => {
+      this.categorias = categorias;
+    });
+  }
 
+  createCategoria() {
+    this.categoriasService.createCategoria(
+      this.nuevaCategoria.nombre,
+      this.nuevaCategoria.descripcion,
+      this.nuevaCategoria.foto
+    ).then(() => {
+      this.loadCategorias();
+      this.resetForm();
+      this.closeCreateModal();
+    });
+  }
 
-  // Cargar todas las categorías
-  async loadCategorias() {
-    this.categorias = await this.categoriaservice.getCategorias();
+  editCategoria(categoria: any) {
+    this.isEditMode = true;
+    this.categoriaEditando = categoria;
+    this.nuevaCategoria = { ...categoria };
+  }
+
+  updateCategoria() {
+    if (this.categoriaEditando) {
+      this.categoriasService.updateCategoria(
+        this.categoriaEditando.id,
+        this.nuevaCategoria.nombre,
+        this.nuevaCategoria.descripcion,
+        this.nuevaCategoria.foto
+      ).then(() => {
+        this.loadCategorias();
+        this.resetForm();
+        this.closeEditModal();
+      });
+    }
+  }
+
+  deleteCategoria(id: string) {
+    this.categoriasService.deleteCategoria(id).then(() => {
+      this.loadCategorias();
+    });
+  }
+
+  resetForm() {
+    this.nuevaCategoria = { nombre: '', descripcion: '', foto: null };
+    this.isEditMode = false;
+    this.categoriaEditando = null;
   }
 
   onFileSelected(event: any) {
-    const file: File = event.target.files[0];
+    const file = event.target.files[0];
     if (file) {
       this.nuevaCategoria.foto = file;
     }
   }
-  async createCategoria() {
-    console.log("boton presionado");
-    const { nombre, descripcion, foto } = this.nuevaCategoria;
-    if (!foto) {
-      alert('Por favor, sube una foto.');
-      return;
-    }
-    const result = await this.categoriaservice.createCategoria(nombre, descripcion, foto);
-    if (result) {
-      this.loadCategorias(); // Recargar categorías después de agregar
-      this.nuevaCategoria = { nombre: '', descripcion: '', foto: null }; // Limpiar campos
-    }
+
+  // Métodos para abrir y cerrar modales
+  openCreateModal() {
+    document.getElementById('createCategoriaModal')!.classList.remove('hidden');
   }
 
-  // Eliminar una categoría
-  async deleteCategoria(id: string) {
-    const result = await this.categoriaservice.deleteCategoria(id);
-    if (result) {
-      this.loadCategorias(); // Recargar categorías después de eliminar
-    }
+  closeCreateModal() {
+    document.getElementById('createCategoriaModal')!.classList.add('hidden');
   }
 
+  openEditModal(categoria: any) {
+    this.editCategoria(categoria);
+    document.getElementById('editCategoriaModal')!.classList.remove('hidden');
+  }
 
-  
-
-
+  closeEditModal() {
+    document.getElementById('editCategoriaModal')!.classList.add('hidden');
+  }
 }

@@ -13,6 +13,12 @@ import { AuthService } from '../../auth/data-access/auth.service';
 export class HeaderComponent {
   constructor(private router: Router, private authservice: AuthService) {}
 
+
+  navigate(path: string) {
+    this.router.navigate([`/${path}`]);
+  }
+
+  
   async logout() {
     await this.authservice.signOut(); // Llamar al método de logout en SupabaseService
     this.router.navigate(['/auth']); // Redirigir al login

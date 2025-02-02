@@ -1,47 +1,89 @@
+<app-header></app-header>
+
+
+<!-- Botón para abrir modal de agregar -->
 <div class="container mx-auto p-6">
     <h1 class="text-3xl font-bold mb-6">Categorías</h1>
-  
-    <!-- Formulario de creación -->
-    <div class="mb-6">
-      <h2 class="text-xl font-semibold mb-4">Crear Categoría</h2>
-      <form (submit)="createCategoria()">
-        <input 
-          [(ngModel)]="nuevaCategoria.nombre"
-          name="nombre"
-          placeholder="Nombre"
-          class="border p-2 mb-2 w-full"
-          required
-        />
-        <textarea 
-          [(ngModel)]="nuevaCategoria.descripcion"
-          name="descripcion"
-          placeholder="Descripción"
-          class="border p-2 mb-2 w-full"
-          required
-        ></textarea>
-        
-        <!-- Campo para seleccionar la foto -->
-        <input 
-          type="file" 
-          (change)="onFileSelected($event)"
-          class="border p-2 mb-2 w-full"
-        />
-        
-        <button type="submit" class="bg-blue-500 text-white p-2 rounded">Crear Categoría</button>
-      </form>
+    <button (click)="openCreateModal()"
+        class="bg-blue-500 text-white p-2 rounded">Agregar Categoría</button>
+</div>
+
+
+
+<div class="relative overflow-x-auto" *ngIf="categorias.length > 0">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">Nombre</th>
+                <th scope="col" class="px-6 py-3">Editar</th>
+                <th scope="col" class="px-6 py-3">Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                *ngFor="let categoria of categorias">
+                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {{ categoria.nombre }}
+                </td>
+                <td class="px-6 py-4">
+                    <button (click)="openEditModal(categoria)"
+                        class="bg-yellow-500 text-white p-2 rounded">Editar</button>
+                </td>
+                <td class="px-6 py-4">
+                    <button (click)="deleteCategoria(categoria.id)"
+                        class="bg-red-500 text-white p-2 rounded">Eliminar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+<!-- Modal para agregar categoría -->
+<div id="createCategoriaModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-semibold mb-4">Agregar Categoría</h2>
+        <form (submit)="createCategoria()">
+            <label class="block mb-2 text-sm font-medium text-gray-900">Nombre</label>
+            <input [(ngModel)]="nuevaCategoria.nombre" name="nombre" required type="text"
+                class="w-full p-2 border rounded-lg">
+
+            <label class="block mb-2 text-sm font-medium text-gray-900">Descripción</label>
+            <textarea [(ngModel)]="nuevaCategoria.descripcion" name="descripcion" required
+                class="w-full p-2 border rounded-lg"></textarea>
+
+            <label class="block mb-2 text-sm font-medium text-gray-900">Imagen</label>
+            <input type="file" (change)="onFileSelected($event)" class="w-full p-2 border rounded-lg">
+
+            <div class="flex justify-end mt-4">
+                <button type="button" (click)="closeCreateModal()" class="bg-gray-500 text-white p-2 rounded mr-2">Cancelar</button>
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded">Crear</button>
+            </div>
+        </form>
     </div>
-  
-    <!-- Lista de categorías -->
-    <div *ngIf="categorias.length > 0">
-      <h2 class="text-xl font-semibold mb-4">Categorías Existentes</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div *ngFor="let categoria of categorias" class="border p-4 rounded-lg shadow">
-          <h3 class="font-semibold">{{ categoria.nombre }}</h3>
-          <p>{{ categoria.descripcion }}</p>
-          <img *ngIf="categoria.foto" [src]="categoria.foto" alt="Foto" class="w-full h-32 object-cover mt-2 mb-4" />
-          <button (click)="deleteCategoria(categoria.id)" class="bg-red-500 text-white p-2 rounded">Eliminar</button>
-        </div>
-      </div>
+</div>
+
+<!-- Modal para editar categoría -->
+<div id="editCategoriaModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-semibold mb-4">Editar Categoría</h2>
+        <form (submit)="updateCategoria()">
+            <label class="block mb-2 text-sm font-medium text-gray-900">Nombre</label>
+            <input [(ngModel)]="nuevaCategoria.nombre" name="nombre" required type="text"
+                class="w-full p-2 border rounded-lg">
+
+            <label class="block mb-2 text-sm font-medium text-gray-900">Descripción</label>
+            <textarea [(ngModel)]="nuevaCategoria.descripcion" name="descripcion" required
+                class="w-full p-2 border rounded-lg"></textarea>
+
+            <label class="block mb-2 text-sm font-medium text-gray-900">Imagen</label>
+            <input type="file" (change)="onFileSelected($event)" class="w-full p-2 border rounded-lg">
+
+            <div class="flex justify-end mt-4">
+                <button type="button" (click)="closeEditModal()" class="bg-gray-500 text-white p-2 rounded mr-2">Cancelar</button>
+                <button type="submit" class="bg-yellow-500 text-white p-2 rounded">Actualizar</button>
+            </div>
+        </form>
     </div>
-  </div>
-  
+</div>

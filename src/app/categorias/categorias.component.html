@@ -1,0 +1,47 @@
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Categorías</h1>
+  
+    <!-- Formulario de creación -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-4">Crear Categoría</h2>
+      <form (submit)="createCategoria()">
+        <input 
+          [(ngModel)]="nuevaCategoria.nombre"
+          name="nombre"
+          placeholder="Nombre"
+          class="border p-2 mb-2 w-full"
+          required
+        />
+        <textarea 
+          [(ngModel)]="nuevaCategoria.descripcion"
+          name="descripcion"
+          placeholder="Descripción"
+          class="border p-2 mb-2 w-full"
+          required
+        ></textarea>
+        
+        <!-- Campo para seleccionar la foto -->
+        <input 
+          type="file" 
+          (change)="onFileSelected($event)"
+          class="border p-2 mb-2 w-full"
+        />
+        
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded">Crear Categoría</button>
+      </form>
+    </div>
+  
+    <!-- Lista de categorías -->
+    <div *ngIf="categorias.length > 0">
+      <h2 class="text-xl font-semibold mb-4">Categorías Existentes</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let categoria of categorias" class="border p-4 rounded-lg shadow">
+          <h3 class="font-semibold">{{ categoria.nombre }}</h3>
+          <p>{{ categoria.descripcion }}</p>
+          <img *ngIf="categoria.foto" [src]="categoria.foto" alt="Foto" class="w-full h-32 object-cover mt-2 mb-4" />
+          <button (click)="deleteCategoria(categoria.id)" class="bg-red-500 text-white p-2 rounded">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

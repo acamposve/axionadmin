@@ -168,40 +168,40 @@ export class CategoriasService {
 
 
   // Modificar una categoría existente
-async updateCategoria(id: string, nombre: string, descripcion: string, foto?: File) {
-  try {
-    let fotoUrl = undefined;
+  async updateCategoria(id: string, nombre: string, descripcion: string, foto?: File) {
+    try {
+      let fotoUrl = undefined;
 
-    if (foto) {
-      // Si se proporciona una nueva foto, subimos la nueva imagen
-      fotoUrl = await this.uploadFoto(foto);
-      if (!fotoUrl) {
-        console.error('No se pudo subir la nueva imagen');
+      if (foto) {
+        // Si se proporciona una nueva foto, subimos la nueva imagen
+        fotoUrl = await this.uploadFoto(foto);
+        if (!fotoUrl) {
+          console.error('No se pudo subir la nueva imagen');
+          return null;
+        }
+      }
+
+      // Actualizar la categoría en la base de datos
+      const { data, error } = await this._supabaseClient
+        .from('Categorias')
+        .update({
+          nombre,
+          descripcion,
+          foto: fotoUrl || undefined, // Si no hay nueva foto, dejamos el campo sin cambios
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error al actualizar la categoría', error);
         return null;
       }
-    }
 
-    // Actualizar la categoría en la base de datos
-    const { data, error } = await this._supabaseClient
-      .from('Categorias')
-      .update({
-        nombre,
-        descripcion,
-        foto: fotoUrl || undefined, // Si no hay nueva foto, dejamos el campo sin cambios
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error al actualizar la categoría', error);
+      return data;
+    } catch (error) {
+      console.error('Error inesperado al actualizar la categoría', error);
       return null;
     }
-
-    return data;
-  } catch (error) {
-    console.error('Error inesperado al actualizar la categoría', error);
-    return null;
   }
-}
 }
